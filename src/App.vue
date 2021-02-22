@@ -1,7 +1,13 @@
 <template>
   <div class="container">
     <global-header :user="currentUser"></global-header>
-    <column-list :list="list" />
+    <!-- <column-list :list="list" /> -->
+    <form action="">
+      <div class="mb-3">
+        <label class="form-label">邮箱地址</label>
+        <validate-input :rules="emailRules" />
+      </div>
+    </form>
   </div>
 </template>
 
@@ -10,6 +16,7 @@ import { defineComponent } from 'vue'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
+import ValidateInput, { RulesProp } from './components/ValidateInput.vue'
 
 const currentUser: UserProps = {
   isLogin: true,
@@ -45,13 +52,19 @@ const testData: ColumnProps[] = [
 export default defineComponent({
   name: 'App',
   components: {
-    ColumnList,
-    GlobalHeader
+    // ColumnList,
+    GlobalHeader,
+    ValidateInput
   },
   setup () {
+    const emailRules: RulesProp = [
+      { type: 'required', message: '电子邮箱地址不能为空' },
+      { type: 'email', message: '请输入正确格式的电子邮箱' }
+    ]
     return {
       list: testData,
-      currentUser
+      currentUser,
+      emailRules
     }
   }
 })
