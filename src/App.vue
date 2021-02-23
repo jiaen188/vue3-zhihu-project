@@ -2,13 +2,15 @@
   <div class="container">
     <global-header :user="currentUser"></global-header>
     <!-- <column-list :list="list" /> -->
-    <form action="">
+    <validate-form action="" @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">邮箱地址</label>
-        <validate-input :rules="emailRules" v-model="emailVal" />
-        {{emailVal}}
+        <validate-input ref="inputRef" :rules="emailRules" v-model="emailVal" type="text" placeholder="请输入邮箱地址" />
       </div>
-    </form>
+      <template v-slot:submit>
+        <div class="btn btn-danger">提交</div>
+      </template>
+    </validate-form>
   </div>
 </template>
 
@@ -18,6 +20,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import ColumnList, { ColumnProps } from './components/ColumnList.vue'
 import GlobalHeader, { UserProps } from './components/GlobalHeader.vue'
 import ValidateInput, { RulesProp } from './components/ValidateInput.vue'
+import ValidateForm from './components/ValidateForm.vue'
 
 const currentUser: UserProps = {
   isLogin: true,
@@ -55,19 +58,26 @@ export default defineComponent({
   components: {
     // ColumnList,
     GlobalHeader,
-    ValidateInput
+    ValidateInput,
+    ValidateForm
   },
   setup () {
-    const emailVal = ref('jiaen')
+    const inputRef = ref<any>()
+    const emailVal = ref('ewrw@123.com')
     const emailRules: RulesProp = [
       { type: 'required', message: '电子邮箱地址不能为空' },
       { type: 'email', message: '请输入正确格式的电子邮箱' }
     ]
+    const onFormSubmit = (result: boolean) => {
+      console.log('inputRef', inputRef.value, inputRef.value.validateInput())
+    }
     return {
       list: testData,
       currentUser,
       emailRules,
-      emailVal
+      emailVal,
+      onFormSubmit,
+      inputRef
     }
   }
 })
