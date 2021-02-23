@@ -69,7 +69,7 @@ export default defineComponent({
       { type: 'email', message: '请输入正确格式的电子邮箱' }
     ]
     const onFormSubmit = (result: boolean) => {
-      console.log('inputRef', inputRef.value, inputRef.value.validateInput())
+      console.log('onFormSubmit', result)
     }
     return {
       list: testData,
