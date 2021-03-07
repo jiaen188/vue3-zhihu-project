@@ -2,7 +2,7 @@
   <div class="container">
     <global-header :user="currentUser"></global-header>
     <!-- <column-list :list="list" /> -->
-    <validate-form action="" @form-submit="onFormSubmit">
+    <!-- <validate-form action="" @form-submit="onFormSubmit">
       <div class="mb-3">
         <label class="form-label">邮箱地址</label>
         <validate-input ref="inputRef" :rules="emailRules" v-model="emailVal" type="text" placeholder="请输入邮箱地址" />
@@ -10,7 +10,19 @@
       <template v-slot:submit>
         <div class="btn btn-danger">提交</div>
       </template>
-    </validate-form>
+    </validate-form> -->
+    <router-view></router-view>
+    <footer class="text-center py-4 text-secondary bg-light mt-6">
+      <small>
+        <ul class="list-inline mb-0">
+          <li class="list-inline-item">© 2020 者也专栏</li>
+          <li class="list-inline-item">课程</li>
+          <li class="list-inline-item">文档</li>
+          <li class="list-inline-item">联系</li>
+          <li class="list-inline-item">更多</li>
+        </ul>
+      </small>
+    </footer>
   </div>
 </template>
 
@@ -57,9 +69,9 @@ export default defineComponent({
   name: 'App',
   components: {
     // ColumnList,
-    GlobalHeader,
-    ValidateInput,
-    ValidateForm
+    GlobalHeader
+    // ValidateInput,
+    // ValidateForm
   },
   setup () {
     const inputRef = ref<any>()
