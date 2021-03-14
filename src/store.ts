@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
-import { testData, testPosts, ColumnProps, PostProps } from './testData'
+import axios from 'axios'
+// import { testData, testPosts } from './testData'
 
 interface UserProps {
   isLogin: boolean;
@@ -8,6 +9,29 @@ interface UserProps {
   columnId?: number;
 }
 
+export interface ImageProps {
+  _id?: string;
+  url?: string;
+  createdAt?: string;
+  fitUrl?: string;
+}
+export interface ColumnProps {
+  _id: string;
+  title: string;
+  avatar?: ImageProps;
+  description: string;
+}
+export interface PostProps {
+  _id?: string;
+  title: string;
+  excerpt?: string;
+  content?: string;
+  image?: ImageProps | string;
+  createdAt?: string;
+  column: string;
+  author?: string | UserProps;
+  isHTML?: boolean;
+}
 export interface GlobalDataProps {
   colums: ColumnProps[];
   posts: PostProps[];
@@ -16,8 +40,8 @@ export interface GlobalDataProps {
 
 const store = createStore<GlobalDataProps>({
   state: {
-    colums: testData,
-    posts: testPosts,
+    colums: [],
+    posts: [],
     user: { isLogin: true, name: 'jiaen', id: 1, columnId: 1 }
   },
   mutations: {
@@ -28,6 +52,16 @@ const store = createStore<GlobalDataProps>({
     },
     createPost (state, newPost) {
       state.posts.push(newPost)
+    },
+    fetchColumns (state, rawData) {
+      state.colums = rawData
+    }
+  },
+  actions: {
+    fetchColumns ({ commit }) {
+      axios.get('/columns').then((res: { data: ColumnProps[] }) => {
+        commit('fetchColumns', res.data)
+      })
     }
   },
   getters: {
