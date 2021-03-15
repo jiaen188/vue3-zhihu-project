@@ -8,7 +8,13 @@ import store from './store'
 axios.defaults.baseURL = 'http://apis.imooc.com/api/'
 
 axios.interceptors.request.use((config) => {
+  store.commit('setLoading', true)
   config.params = { ...config.params, icode: '8A6AE5F537FEDE93' }
+  return config
+})
+
+axios.interceptors.response.use(config => {
+  store.commit('setLoading', false)
   return config
 })
 
