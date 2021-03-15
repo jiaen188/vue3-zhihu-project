@@ -7,8 +7,8 @@ import store from './store'
 // axios.defaults.baseURL = 'http://localhost:7001/api/'
 axios.defaults.baseURL = 'http://apis.imooc.com/api/'
 
-axios.interceptors.request.use((config: { params: any }) => {
-  config.params = { ...config.params, icode: 'C6A6C4086133360B' }
+axios.interceptors.request.use((config) => {
+  config.params = { ...config.params, icode: '8A6AE5F537FEDE93' }
   return config
 })
 

@@ -5,9 +5,9 @@
         <h4><router-link :to="`/posts/${post._id}/`">{{post.title}}</router-link></h4>
         <div class="row my-3 align-items-center">
           <div v-if="post.image" class="col-4">
-            <img :src="post.image" :alt="post.title" class="rounded-lg w-100">
+            <img :src="post.image && post.image.url" :alt="post.title" class="rounded-lg w-100">
           </div>
-          <p :class="{'col-8': post.image}" class="text-muted">{{post.content}}</p>
+          <p :class="{'col-8': post.image}" class="text-muted">{{post.excerpt}}</p>
         </div>
         <span class="text-muted">{{post.createdAt}}</span>
       </div>
@@ -17,17 +17,8 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-interface PostProps {
-  _id?: string;
-  title: string;
-  excerpt?: string;
-  content?: string;
-  image?: string;
-  createdAt?: string;
-  column: string;
-  author?: string;
-  isHTML?: boolean;
-}
+import { PostProps } from '../store'
+
 export default defineComponent({
   props: {
     list: {
