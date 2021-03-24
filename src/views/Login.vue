@@ -60,7 +60,7 @@ export default defineComponent({
           password: passwordVal.value,
           icode: '8A6AE5F537FEDE93'
         }
-        store.dispatch('login', payload).then(data => {
+        store.dispatch('loginAndFetch', payload).then(data => {
           console.log('data', data)
           router.push('/')
         })
