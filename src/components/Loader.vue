@@ -1,21 +1,22 @@
 <template>
-  <teleport to="#back">
-    <div
-      class="d-flex justify-content-center align-items-center h-100 w-100 loading-container"
-      :style="{backgroundColor: background || ''}"
-    >
-      <div class="loading-content">
-        <div class="spinner-border text-primary" role="status">
-          <span class="sr-only">{{ text || 'loading'}}</span>
-        </div>
-        <p v-if="text" class="text-primary small">{{text}}</p>
+<teleport to="#back">
+  <div
+    class="d-flex justify-content-center align-items-center h-100 w-100 loading-container"
+    :style="{backgroundColor: background || ''}"
+  >
+    <div class="loading-content">
+      <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">{{ text || 'loading'}}</span>
       </div>
+      <p v-if="text" class="text-primary small">{{text}}</p>
     </div>
-  </teleport>
+  </div>
+</teleport>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, onUnmounted } from 'vue'
+
 export default defineComponent({
   props: {
     text: {
