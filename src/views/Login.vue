@@ -57,8 +57,7 @@ export default defineComponent({
       if (result) {
         const payload = {
           email: emailVal.value,
-          password: passwordVal.value,
-          icode: '8A6AE5F537FEDE93'
+          password: passwordVal.value
         }
         store.dispatch('loginAndFetch', payload).then(data => {
           console.log('data', data)
