@@ -10,6 +10,7 @@
           placeholder="请输入文章标题"
           type="text"
         />
+        <Uploader action="/upload" />
       </div>
       <div class="mb-3">
         <label class="form-label">文章详情：</label>
@@ -37,11 +38,13 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { GlobalDataProps, PostProps } from '@/store'
 // import { PostProps } from '@/testData'
+import Uploader from '../components/Uploader.vue'
 
 export default defineComponent({
   components: {
     ValidateInput,
-    ValidateForm
+    ValidateForm,
+    Uploader
   },
   setup () {
     const router = useRouter()
