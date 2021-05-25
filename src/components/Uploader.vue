@@ -1,6 +1,6 @@
 <template>
   <div class="file-upload">
-    <div class="file-upload-container" @click.prevent="triggerUpload">
+    <div class="file-upload-container" @click.prevent="triggerUpload" v-bind="$attrs">
       <slot v-if="fileStatus === 'loading'" name="loading">
         <button class="btn btn-primary" disabled>正在上传...</button>
       </slot>
@@ -11,7 +11,12 @@
         <button class="btn btn-primary">点击上传</button>
       </slot>
     </div>
-    <input type="file" class="file-input d-none" ref="fileInput" @change="handleFileChange">
+    <input
+      type="file"
+      class="file-input d-none"
+      ref="fileInput"
+      @change="handleFileChange"
+    >
   </div>
 </template>
 
