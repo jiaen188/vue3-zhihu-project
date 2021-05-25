@@ -10,7 +10,20 @@
           placeholder="请输入文章标题"
           type="text"
         />
-        <Uploader action="/upload" :beforeUpload="beforeUpload" @file-uploaded="handleFileUploaded" />
+        <Uploader action="/upload" :beforeUpload="beforeUpload" @file-uploaded="handleFileUploaded" >
+          <h2>点击上传</h2>
+          <template #loading>
+            <div class="spinner-border text-secondary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </template>
+          <template #uploaded="dataProps">
+            <div class="uploaded-area">
+              <img :src="dataProps.uploadedData.data.url">
+              <h3>点击重新上传</h3>
+            </div>
+          </template>
+        </Uploader>
       </div>
       <div class="mb-3">
         <label class="form-label">文章详情：</label>
