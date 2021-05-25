@@ -10,7 +10,7 @@
           placeholder="请输入文章标题"
           type="text"
         />
-        <Uploader action="/upload" />
+        <Uploader action="/upload" :beforeUpload="beforeUpload" @file-uploaded="handleFileUploaded" />
       </div>
       <div class="mb-3">
         <label class="form-label">文章详情：</label>
@@ -36,9 +36,10 @@ import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { GlobalDataProps, PostProps } from '@/store'
+import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '@/store'
 // import { PostProps } from '@/testData'
 import Uploader from '../components/Uploader.vue'
+import createMessage from '../components/createMessage'
 
 export default defineComponent({
   components: {
@@ -89,13 +90,29 @@ export default defineComponent({
         })
       }
     }
+
+    const beforeUpload = (file: File) => {
+      console.log('file', file)
+      const isJPG = file.type === 'image/jpeg'
+      if (!isJPG) {
+        createMessage('上传图片只能是 JPG 格式', 'error')
+      }
+      return isJPG
+    }
+
+    const handleFileUploaded = (rawData: ResponseType<ImageProps>) => {
+      createMessage(`上传图片ID ${rawData.data._id}`, 'success')
+    }
+
     return {
       titleVal,
       titleRules,
       contentVal,
       contentRules,
       onFormSubmit,
-      handleFileChange
+      handleFileChange,
+      beforeUpload,
+      handleFileUploaded
     }
   }
 })
