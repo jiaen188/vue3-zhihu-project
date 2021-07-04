@@ -59,6 +59,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '@/store'
 // import { PostProps } from '@/testData'
+import { beforeUploadCheck } from '../helper'
 import Uploader from '../components/Uploader.vue'
 import createMessage from '../components/createMessage'
 
@@ -71,6 +72,7 @@ export default defineComponent({
   setup () {
     const router = useRouter()
     const store = useStore<GlobalDataProps>()
+    let imageId = ''
     const titleVal = ref('')
     const titleRules: RulesProp = [
       { type: 'required', message: '文章标题不能为空' }
@@ -82,17 +84,25 @@ export default defineComponent({
     const uploadedData = ref({})
     const onFormSubmit = (result: boolean) => {
       if (result) {
-        const { column } = store.state.user
+        const { column, _id } = store.state.user
         if (column) {
           const newPost: PostProps = {
             // _id: String(new Date().getTime()),
             title: titleVal.value,
             content: contentVal.value,
-            column: column
+            column: column,
+            author: _id
             // createdAt: new Date().toLocaleString()
           }
-          store.commit('createPost', newPost)
-          router.push({ name: 'column', params: { id: column } })
+          if (imageId) {
+            newPost.image = imageId
+          }
+          store.dispatch('createPost', newPost).then(() => {
+            createMessage('发表成功，2秒后跳转到文章', 'success', 2000)
+            setTimeout(() => {
+              router.push({ name: 'column', params: { id: column } })
+            }, 2000)
+          })
         }
       }
     }
@@ -113,29 +123,22 @@ export default defineComponent({
       }
     }
 
-    const beforeUpload = (file: File) => {
-      console.log('file', file)
-      const isJPG = file.type === 'image/jpeg'
-      if (!isJPG) {
-        createMessage('上传图片只能是 JPG 格式', 'error')
-      }
-      return isJPG
-    }
-
     const handleFileUploaded = (rawData: ResponseType<ImageProps>) => {
-      createMessage(`上传图片ID ${rawData.data._id}`, 'success')
+      if (rawData.data._id) {
+        imageId = rawData.data._id
+      }
     }
-    // const uploadCheck = (file: File) => {
-    //   const result = beforeUploadCheck(file, { format: ['image/jpeg', 'image/png'], size: 1 })
-    //   const { passed, error } = result
-    //   if (error === 'format') {
-    //     createMessage('上传图片只能是 JPG/PNG 格式!', 'error')
-    //   }
-    //   if (error === 'size') {
-    //     createMessage('上传图片大小不能超过 1Mb', 'error')
-    //   }
-    //   return passed
-    // }
+    const uploadCheck = (file: File) => {
+      const result = beforeUploadCheck(file, { format: ['image/jpeg', 'image/png'], size: 1 })
+      const { passed, error } = result
+      if (error === 'format') {
+        createMessage('上传图片只能是 JPG/PNG 格式!', 'error')
+      }
+      if (error === 'size') {
+        createMessage('上传图片大小不能超过 1Mb', 'error')
+      }
+      return passed
+    }
 
     return {
       titleVal,
@@ -144,10 +147,9 @@ export default defineComponent({
       contentRules,
       onFormSubmit,
       handleFileChange,
-      beforeUpload,
       handleFileUploaded,
-      uploadedData
-      // uploadCheck
+      uploadedData,
+      uploadCheck
     }
   }
 })
