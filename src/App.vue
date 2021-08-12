@@ -1,7 +1,6 @@
 <template>
   <div class="container">
     <global-header :user="currentUser"></global-header>
-    <Title></Title>
     <Loader v-if="isLoading" />
     <!-- <Message type="error" :message="error.message" v-if="error.status" /> -->
     <router-view></router-view>
@@ -21,7 +20,6 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, watch } from 'vue'
-import Title from './views/title/index.vue'
 import { useStore } from 'vuex'
 import axios from 'axios'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -35,8 +33,7 @@ export default defineComponent({
   name: 'App',
   components: {
     GlobalHeader,
-    Loader,
-    Title
+    Loader
     // Message
   },
   setup () {
