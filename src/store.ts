@@ -64,7 +64,6 @@ const getAndCommit = async (url: string, mutationName: string, commit: Commit) =
   const { data } = await axios.get(url)
   commit(mutationName, data)
   return data
-  return
 }
 
 const postAndCommit = async (url: string, mutationName: string, commit: Commit, payload: any) => {
@@ -124,6 +123,9 @@ const store = createStore<GlobalDataProps>({
     fetchPost (state, rawData) {
       state.posts.data[rawData.data._id] = rawData.data
     },
+    updatePost (state, { data }) {
+      state.posts.data[data._id] = data
+    },
     setLoading (state, status) {
       state.loading = status
     },
@@ -168,6 +170,12 @@ const store = createStore<GlobalDataProps>({
       } else {
         return Promise.resolve({ data: currentPost })
       }
+    },
+    updatePost ({ commit }, { id, payload }) {
+      return asyncAndCommit(`/posts/${id}`, 'updatePost', commit, {
+        method: 'patch',
+        data: payload
+      })
     },
     fetchCurrentUser ({ commit }) {
       return getAndCommit('/user/current', 'fetchCurrentUser', commit)

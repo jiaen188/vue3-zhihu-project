@@ -1,6 +1,6 @@
 <template>
   <div class="create-post-page">
-    <h4>新建文章</h4>
+    <h4>{{isEditMode ? '编辑文章' : '新建文章'}}</h4>
     <Uploader
       action="/upload"
       :beforeUpload="uploadCheck"
@@ -19,7 +19,7 @@
       </template>
       <template #uploaded="dataProps">
         <div class="uploaded-area">
-          <img :src="dataProps.uploadedData.data.url">
+          <img :src="dataProps.uploadedData && dataProps.uploadedData.data && dataProps.uploadedData.data.url">
           <h3>点击重新上传</h3>
         </div>
       </template>
@@ -44,18 +44,18 @@
         />
       </div>
       <template #submit>
-        <button class="btn btn-primary btn-large">发表文章</button>
+        <button class="btn btn-primary btn-large">{{isEditMode ? '更新文章' : '发表文章'}}</button>
       </template>
     </validate-form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, onMounted, ref } from 'vue'
 import axios from 'axios'
 import ValidateInput, { RulesProp } from '../components/ValidateInput.vue'
 import ValidateForm from '../components/ValidateForm.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { GlobalDataProps, PostProps, ResponseType, ImageProps } from '@/store'
 // import { PostProps } from '@/testData'
@@ -71,6 +71,8 @@ export default defineComponent({
   },
   setup () {
     const router = useRouter()
+    const route = useRoute()
+    const isEditMode = !!route.query.id
     const store = useStore<GlobalDataProps>()
     let imageId = ''
     const titleVal = ref('')
@@ -82,6 +84,18 @@ export default defineComponent({
       { type: 'required', message: '文章详情不能为空' }
     ]
     const uploadedData = ref({})
+    onMounted(() => {
+      if (isEditMode) {
+        store.dispatch('fetchPost', route.query.id).then((rawData: ResponseType<PostProps>) => {
+          const currentPost = rawData.data
+          if (currentPost.image) {
+            uploadedData.value = { data: currentPost.image }
+          }
+          titleVal.value = currentPost.title
+          contentVal.value = currentPost.content || ''
+        })
+      }
+    })
     const onFormSubmit = (result: boolean) => {
       if (result) {
         const { column, _id } = store.state.user
@@ -97,29 +111,18 @@ export default defineComponent({
           if (imageId) {
             newPost.image = imageId
           }
-          store.dispatch('createPost', newPost).then(() => {
+          const actionName = isEditMode ? 'updatePost' : 'createPost'
+          const sendData = isEditMode ? {
+            id: route.query.id,
+            payload: newPost
+          } : newPost
+          store.dispatch(actionName, sendData).then(() => {
             createMessage('发表成功，2秒后跳转到文章', 'success', 2000)
             setTimeout(() => {
               router.push({ name: 'column', params: { id: column } })
             }, 2000)
           })
         }
-      }
-    }
-    const handleFileChange = (e: Event) => {
-      const target = e.target as HTMLInputElement
-      const files = target.files
-      if (files) {
-        const uploadFile = files[0]
-        const formData = new FormData()
-        formData.append(uploadFile.name, uploadFile)
-        axios.post('/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        }).then((res: any) => {
-          console.log('res', res)
-        })
       }
     }
 
@@ -146,10 +149,10 @@ export default defineComponent({
       contentVal,
       contentRules,
       onFormSubmit,
-      handleFileChange,
       handleFileUploaded,
       uploadedData,
-      uploadCheck
+      uploadCheck,
+      isEditMode
     }
   }
 })
